@@ -1,31 +1,24 @@
-import smbus
+import smbus2 as smbus
 import time
 import sys
 
 bus = smbus.SMBus(1)
 address = 0x6b
 
-def main():
-    while True:
-        # Enviar mensaje a Arduino
-        message = "Yo bien, tu que tal?"
-        bus.write_i2c_block_data(address, 0, [ord(c) for c in message])
-        print("Raspberry Pi to Arduino: Yo bien, tu que tal?")
-        
-        # Esperar un poco antes de leer la respuesta
-        time.sleep(1)
-        
-        # Leer la respuesta de Arduino
-        response = bus.read_i2c_block_data(address, 0, 32)
-        response_message = ''.join([chr(c) for c in response if c != 0])
-        print("Arduino to Raspberry Pi:", response_message)
-        
-        # Esperar un poco antes de la siguiente iteración
-        time.sleep(5)
+def write_number(value):
+    bus.write_byte(address,value)
+    time.sleep(0.1)
 
-if __name__ == '__main__':
-    try:
-        main()
-    except KeyboardInterrupt:
-        print('Interrupted')
-        sys.exit(0)
+def read_number():
+    number = bus.read_byte(address)
+    return(number)
+
+while True:
+    number = int(input("Ingrese un numero:"))
+    write_number = number
+    print(f"RPI envió: {number}")
+
+    reponse = read_number()
+    print(f"RPI recibió: {reponse}")
+
+time.sleep(1)
