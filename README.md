@@ -1,2 +1,4 @@
 # I2C communication for a Raspberry Pi
-An example of i2c communication between a raspberry pi 3 model b+ and a pycom lopy 4 for the creation of an edge-fog structure.
+
+![image](https://github.com/IvanFernande/i2c-communication-raspberrypi/assets/149154386/4a0fb3e4-0a36-4861-8dbf-a7145b964aac)
+
