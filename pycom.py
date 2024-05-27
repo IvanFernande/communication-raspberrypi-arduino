@@ -1,25 +1,30 @@
-from machine import I2C, Pin
-import time
-
-# Configurar I2C
-i2c = I2C(0, scl=Pin('P10'), sda=Pin('P9'))  # Ajusta los pines según tu conexión
-i2c.init(I2C.MASTER, baudrate=100000)
-
-address = 0x42  # Dirección I2C de la Raspberry Pi
-
-def send_message(message):
-    # Convertir el mensaje a bytes
-    message_bytes = bytes(message, 'utf-8')
-    # Enviar longitud del mensaje primero
-    i2c.writeto(address, bytes([len(message_bytes)]))
-    # Enviar el mensaje
-    i2c.writeto(address, message_bytes)
-
-while True:
-    try:
-        send_message("Hola Mundo")
-        print("Mensaje enviado: Hola Mundo")
-        time.sleep(5)
-    except Exception as e:
-        print("Error:", e)
-        time.sleep(5)
+#include <Wire.h>
+# define I2C_SLAVE_ADDRESS 11 // 12 pour l'esclave 2 et ainsi de suite
+#define PAYLOAD_SIZE 2
+void setup()
+{
+  Wire.begin(I2C_SLAVE_ADDRESS);
+  Serial.begin(9600);
+  Serial.println("-------------------------------------I am Slave1");
+  delay(1000);
+  Wire.onRequest(requestEvents);
+  Wire.onReceive(receiveEvents);
+}
+void loop(){}
+int n = 0;
+void requestEvents()
+{
+  Serial.println(F("---> recieved request"));
+  Serial.print(F("sending value : "));
+  Serial.println(n);
+  Wire.write(n);
+}
+void receiveEvents(int numBytes)
+{
+  Serial.println(F("---> recieved events"));
+  n = Wire.read();
+  Serial.print(numBytes);
+  Serial.println(F("bytes recieved"));
+  Serial.print(F("recieved value : "));
+  Serial.println(n);
+}
