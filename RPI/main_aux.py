@@ -109,7 +109,7 @@ while True:
             logging.info(f"Fecha actual entre las {fecha_ref1} y {fecha_ref2}")
             try:
                 logging.info("Se ejecutará checksat.py")
-                output_chechsat = subprocess.run(['python','checksat.py'], capture_output=True, text=True)
+                output_checksat = subprocess.run(['python','checksat.py'], capture_output=True, text=True)
             except Exception as e:
                 logging.error(f"Mientras se intentaba ejecutar checksat.py ocurrio: {e}")
     except Exception as e:
