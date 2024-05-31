@@ -39,7 +39,7 @@ def read_data():
         logging.error(f"Error reading data: {e}")
         return None
 
-def save_to_csv(values, filename="data.csv"):
+def save_to_csv(values, filename):
     try:
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         
