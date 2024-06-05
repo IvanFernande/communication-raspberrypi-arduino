@@ -1,81 +1,53 @@
+import serial
 import csv
-import logging
-from smbus2 import SMBus, i2c_msg
 import time
+import logging
 import pandas as pd
 from datetime import datetime
-import struct
 
-logging.basicConfig(filename='app.log', filemode='a', format='%(asctime)s - %(levelname)s - %(message)s', level=logging.INFO)
+# Configura el logging
+logging.basicConfig(level=logging.INFO)
 
-DEVICE_ADDRESS = 0x6b
+def enviar_datos(ser, lista_datos):
+    # Enviar el tamaño de la lista primero
+    ser.write(f'SIZE:{len(lista_datos)}\n'.encode('utf-8'))
 
-bus = SMBus(1)
+    # Enviar los elementos de la lista
+    for dato in lista_datos:
+        ser.write(f'DATA:{dato}\n'.encode('utf-8'))
 
-filename = "historial_datos.csv"
+def recibir_datos(ser):
+    if ser.in_waiting > 0:
+        line = ser.readline().decode('utf-8').strip()
 
-column_names = ["DateTime", "Sensor 0", "Sensor 1", "Sensor 2", "Sensor 3", "Sensor 4", "Sensor 5"]
+        if line.startswith("SIZE:"):
+            dataSize = int(line.split(":")[1])
+            receivedData = []
 
-try:
-    pd.read_csv(filename)
-except FileNotFoundError:
-    df = pd.DataFrame(columns=column_names)
-    df.to_csv(filename, index=False)
+            for _ in range(dataSize):
+                while True:
+                    if ser.in_waiting > 0:
+                        dataLine = ser.readline().decode('utf-8').strip()
+                        if dataLine.startswith("DATA:"):
+                            receivedData.append(int(dataLine.split(":")[1]))
+                            break
 
-def read_data():
-    try:
-        msg = i2c_msg.read(DEVICE_ADDRESS, 14)
-        bus.i2c_rdwr(msg)
-
-        data = list(msg)
-        values = []
-        for i in range(0, 14, 2):
-            value = (data[i] << 8) + data[i + 1]
-            values.append(value)
-        if 65535 in values:
-            time.sleep(1)
-            logging.info(f"Los valores recibidos han sido 65535")
-            return None
-        if values[-1] != 23456:
-            time.sleep(1)
-            logging.info(f"El valor de calidad no fue correcto")
-            return None
-        print("Dato recibido ", values)
-        logging.info(f"Data read successfully: {values}")
-        values.pop(-1)
-        return values
-    except Exception as e:
-        logging.error(f"Error reading data: {e}")
-        return None
-def send_data(float1, float2):
-    try:
-        alpha_ard = struct.pack('d',float1)
-        beta_ard = struct.pack('d',float2)
-        sleep_permiso_ard = struct.pack('d',0.2000)
-        print(len(alpha_ard + beta_ard + sleep_permiso_ard))
-        feedback = i2c_msg.write(DEVICE_ADDRESS, alpha_ard + beta_ard + sleep_permiso_ard)
-        bus.i2c_rdwr(feedback)
-
-        logging.info(f'Data enviada al Arduino: {float1}, {float2}')
-
-    except Exception as e:
-        logging.error(f"Error sending data to Arduino: {e}")
-
+            return receivedData
+    return None
 
 def save_to_csv(values, filename):
     try:
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
         data = {
-            "Timestamp": [timestamp],
-            "Value1": [values[0]],
-            "Value2": [values[1]],
-            "Value3": [values[2]],
-            "Value4": [values[3]],
-            "Value5": [values[4]],
-            "Value6": [values[5]],
+            "DateTime": [timestamp],
+            "Sensor 0": [values[0]],
+            "Sensor 1": [values[1]],
+            "Sensor 2": [values[2]],
+            "Sensor 3": [values[3]],
+            "Sensor 4": [values[4]],
+            "Sensor 5": [values[5]],
         }
-
         df = pd.DataFrame(data)
 
         df.to_csv(filename, mode='a', index=False, header=False)
@@ -83,11 +55,31 @@ def save_to_csv(values, filename):
     except Exception as e:
         logging.error(f"Error saving data to {filename}: {e}")
 
-alpha = 12.47483473
-beta = -12.45357439
-while True:
-    data = read_data()
-    if data is not None:
-        save_to_csv(data,filename)
-        send_data(alpha,beta)
-    time.sleep(5)
+def main():
+    filename = "historial_datos_bt.csv"
+    column_names = ["DateTime", "Sensor 0", "Sensor 1", "Sensor 2", "Sensor 3", "Sensor 4", "Sensor 5"]
+    try:
+        pd.read_csv(filename)
+    except FileNotFoundError:
+        df = pd.DataFrame(columns=column_names)
+        df.to_csv(filename, index=False)
+
+    # Configura la conexión serial
+    ser = serial.Serial('/dev/rfcomm0', 9600)  # Reemplaza '/dev/ttyUSB0' por el puerto correcto
+    time.sleep(2)  # Esperar un poco para asegurarse de que la conexión esté establecida
+
+    lista_datos_a_enviar = [10, 20, 30, 40, 50, 60]  # Ejemplo de datos a enviar
+
+    while True:
+        # Enviar datos al Arduino
+        enviar_datos(ser, lista_datos_a_enviar)
+
+        # Esperar una respuesta del Arduino
+        datos_recibidos = recibir_datos(ser)
+        if datos_recibidos:
+            save_to_csv(datos_recibidos, filename)
+
+        time.sleep(5)  # Esperar un tiempo antes de volver a enviar datos
+
+if __name__ == "__main__":
+    main()
