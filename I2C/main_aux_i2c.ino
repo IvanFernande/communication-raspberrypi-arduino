@@ -71,8 +71,6 @@ void receiveData(int byteCount) {
 
     sleep_permiso = 1;
     
-  } else {
-    Serial.println("Error: Received data size mismatch");
   }
 }
 
