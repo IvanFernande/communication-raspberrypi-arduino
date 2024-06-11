@@ -12,7 +12,7 @@ void enviarDatos(const int data[], int dataSize) {
   }
 }
 
-bool recibirDatos(int receivedList[], int &receivedSize) {
+bool recibirDatos(double receivedList[], int &receivedSize) {
   if (Serial1.available()) {
     String receivedData = Serial1.readStringUntil('\n');
     if (receivedData.startsWith("SIZE:")) {
@@ -24,14 +24,14 @@ bool recibirDatos(int receivedList[], int &receivedSize) {
         }
         String dataString = Serial1.readStringUntil('\n');
         if (dataString.startsWith("DATA:")) {
-          receivedList[i] = dataString.substring(5).toInt();
+          receivedList[i] = dataString.substring(5).toDouble();
         }
       }
 
       // Imprimir la lista recibida para depuración
       Serial.print("Lista recibida: ");
       for (int i = 0; i < receivedSize; i++) {
-        Serial.print(receivedList[i]);
+        Serial.print(receivedList[i], 10);
         if (i < receivedSize - 1) {
           Serial.print(", ");
         }
@@ -51,7 +51,7 @@ void setup() {
 }
 
 void loop() {
-  int receivedList[12]; // Ajustar tamaño según sea necesario
+  double receivedList[12]; // Ajustar tamaño según sea necesario
 
   int receivedSize = 0;
 
