@@ -6,14 +6,12 @@ import pandas as pd
 from datetime import datetime
 import struct
 
-logging.basicConfig(filename='app.log', filemode='a', format='%(asctime)s - %(levelname)s - %(message)s', level=logging.INFO)
+logging.basicConfig(filename='pruebai2c.log', filemode='a', format='%(asctime)s - %(levelname)s - %(message)s', level=logging.INFO)
 
 DEVICE_ADDRESS = 0x6b
-
 bus = SMBus(1)
 
 filename = "historial_datos.csv"
-
 column_names = ["DateTime", "Sensor 0", "Sensor 1", "Sensor 2", "Sensor 3", "Sensor 4", "Sensor 5"]
 
 try:
@@ -32,6 +30,7 @@ def read_data():
         for i in range(0, 14, 2):
             value = (data[i] << 8) + data[i + 1]
             values.append(value)
+        print(values)
         if 65535 in values:
             time.sleep(1)
             logging.info(f"Los valores recibidos han sido 65535")
@@ -47,13 +46,17 @@ def read_data():
     except Exception as e:
         logging.error(f"Error reading data: {e}")
         return None
-def send_data(float1, float2):
-    try:
-        alpha_ard = struct.pack('d',float1)
-        beta_ard = struct.pack('d',float2)
+
+def send_data(alpha_list, beta_list):
+        try:
+        packed_alpha = b''.join(struct.pack('d', num) for num in alpha_list)
+        packed_beta = b''.join(struct.pack('d', num) for num in beta_list)
         sleep_permiso_ard = struct.pack('d',0.2000)
-        print(len(alpha_ard + beta_ard + sleep_permiso_ard))
-        feedback = i2c_msg.write(DEVICE_ADDRESS, alpha_ard + beta_ard + sleep_permiso_ard)
+
+        packed_data = packed_alpha + packed_beta + sleep_permiso_ard
+        print(len(packed_data))
+
+        feedback = i2c_msg.write(DEVICE_ADDRESS, packed_data)
         bus.i2c_rdwr(feedback)
 
         logging.info(f'Data enviada al Arduino: {float1}, {float2}')
@@ -83,11 +86,12 @@ def save_to_csv(values, filename):
     except Exception as e:
         logging.error(f"Error saving data to {filename}: {e}")
 
-alpha = 12.47483473
-beta = -12.45357439
+alpha = [3.24892489, 4.324242, 5.432432]
+beta = [-0.3427482, -0.5347832, -0.1123314]
 while True:
     data = read_data()
     if data is not None:
+        print("Data Recivied")
         save_to_csv(data,filename)
         send_data(alpha,beta)
     time.sleep(5)
