@@ -1,5 +1,5 @@
 #include <Wire.h>
-#include <Arduino_CRC32.h>
+#include <CRC32.h>
 
 #define SLAVE_ADDRESS 0x6b
 
