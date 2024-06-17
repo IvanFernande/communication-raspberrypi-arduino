@@ -1,5 +1,6 @@
 #include "Config.h"
 #include <Wire.h>
+#include <CRC32.h>
 #include <DFRobot_SHT20.h>
 #include <ArduinoLowPower.h>
 #include <FlashStorage_SAMD.h>
@@ -15,10 +16,10 @@
 #define SLAVE_ADDRESS 0x6b
 
 uint8_t number2[24];
-int values[7];
+int values[6];
 const int NUM_DOUBLES_ALPHA = 3; 
 const int NUM_DOUBLES_BETA = 3; 
-const int TOTAL_DOUBLES = NUM_DOUBLES_ALPHA + NUM_DOUBLES_BETA + 1; 
+const int TOTAL_DOUBLES = NUM_DOUBLES_ALPHA + NUM_DOUBLES_BETA; 
 float valores_a_mandar[6];
 int sleep_permiso = 0;
 
@@ -40,15 +41,26 @@ void setup() {
 }
 
 void receiveData(int byteCount) {
-  double receivedData[TOTAL_DOUBLES];
-  byte buffer[sizeof(double) * TOTAL_DOUBLES];
-  
+  byte buffer[sizeof(double) * TOTAL_DOUBLES + sizeof(uint32_t)];
   int index = 0;
   while (Wire.available() && index < sizeof(buffer)) {
     buffer[index++] = Wire.read();
   }
 
   if (index == sizeof(buffer)) {
+    uint32_t received_crc;
+    memcpy(&received_crc, &buffer[sizeof(double) * TOTAL_DOUBLES], sizeof(uint32_t));
+    
+    CRC32 crc;
+    crc.update(buffer, sizeof(double) * TOTAL_DOUBLES);
+    uint32_t calculated_crc = crc.finalize();
+
+    if (calculated_crc != received_crc) {
+      Serial.println("Error: CRC32 no coincide");
+      return;
+    }
+
+    double receivedData[TOTAL_DOUBLES];
     for (int i = 0; i < TOTAL_DOUBLES; i++) {
       memcpy(&receivedData[i], &buffer[i * sizeof(double)], sizeof(double));
     }
@@ -64,40 +76,27 @@ void receiveData(int byteCount) {
       Serial.print("Received double: ");
       Serial.println(receivedData[i], 8);
     }
-
-    Serial.println("Check value:");
-    Serial.print("Received double: ");
-    Serial.println(receivedData[NUM_DOUBLES_ALPHA + NUM_DOUBLES_BETA], 8);
-
-    sleep_permiso = 1;
-    
   }
 }
 
 void sendData() {
-  Serial.println("Ejecuto sendData():");
-  Serial.println(valores_a_mandar[3]);
-  int values[7];
-  values[0] = (int)valores_a_mandar[0]; //Sensor 0
-  values[1] = (int)valores_a_mandar[1]; //Sensor 1
-  values[2] = (int)valores_a_mandar[2]; //Sensor 2
-  values[3] = (int)valores_a_mandar[3]; //Sensor 3
-  values[4] = (int)valores_a_mandar[4]; //Sensor 4
-  values[5] = (int)valores_a_mandar[5]; //Sensor 5
-  values[6] = 23456;
-  uint8_t number[14];
-
-  for (int i = 0; i < 7; i++) {
+  for (int i = 0; i < 6; i++) {
     int highByte = (values[i] >> 8) & 0xFF;
     int lowByte = values[i] & 0xFF;
     number[i * 2] = highByte;
     number[i * 2 + 1] = lowByte;
   }
 
+  CRC32 crc;
+  crc.update(number, 12);  // Calcular CRC32 para los primeros 12 bytes
+  uint32_t crcValue = crc.finalize();
+  number[12] = (crcValue >> 8) & 0xFF;
+  number[13] = crcValue & 0xFF;
+
   Serial.print("Sending values: ");
-  for (int i = 0; i < 7; i++) {
+  for (int i = 0; i < 6; i++) {
     Serial.print(values[i]);
-    if (i < 7) {
+    if (i < 5) {
       Serial.print(", ");
     }
   }
