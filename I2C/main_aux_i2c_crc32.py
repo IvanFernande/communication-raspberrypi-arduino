@@ -40,7 +40,7 @@ def read_data():
         for i in range(0, 12, 2):  # Leer solo los primeros 12 bytes como valores
             value = (data[i] << 8) + data[i + 1]
             values.append(value)
-
+        print(values)
         received_crc = (data[12] << 8) + data[13]
         calculated_crc = zlib.crc32(bytes(data[:12])) & 0xFFFF
 
