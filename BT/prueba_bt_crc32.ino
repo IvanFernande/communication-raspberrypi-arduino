@@ -2,24 +2,21 @@
 #include <Arduino_CRC32.h>
 
 void enviarDatos(const int data[], int dataSize) {
-  // Calcular CRC32 para los datos
   CRC32 crc;
   for (int i = 0; i < dataSize; i++) {
-    crc.update(data[i]);
+    crc.update(data[i] & 0xFF);
+    crc.update((data[i] >> 8) & 0xFF);
   }
   uint32_t crcValue = crc.finalize();
 
-  // Enviar el tamaño de la lista primero
   Serial1.print("SIZE:");
   Serial1.println(dataSize);
 
-  // Enviar los elementos de la lista
   for (int i = 0; i < dataSize; i++) {
     Serial1.print("DATA:");
     Serial1.println(data[i]);
   }
 
-  // Enviar el CRC32
   Serial1.print("CRC:");
   Serial1.println(crcValue);
 }
@@ -40,17 +37,18 @@ bool recibirDatos(double receivedList[], int &receivedSize) {
         }
       }
 
-      // Recibir y verificar CRC32
       while (!Serial1.available()) {
         // Esperar hasta que se reciba el CRC
       }
       String crcString = Serial1.readStringUntil('\n');
       if (crcString.startsWith("CRC:")) {
         uint32_t received_crc = crcString.substring(4).toInt();
-        
+
         CRC32 crc;
         for (int i = 0; i < receivedSize; i++) {
-          crc.update((uint8_t*)&receivedList[i], sizeof(receivedList[i]));
+          uint16_t value = static_cast<uint16_t>(receivedList[i]);
+          crc.update(value & 0xFF);
+          crc.update((value >> 8) & 0xFF);
         }
         uint32_t calculated_crc = crc.finalize();
 
@@ -60,7 +58,6 @@ bool recibirDatos(double receivedList[], int &receivedSize) {
         }
       }
 
-      // Imprimir la lista recibida para depuración
       Serial.print("Lista recibida: ");
       for (int i = 0; i < receivedSize; i++) {
         Serial.print(receivedList[i], 10);
