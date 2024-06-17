@@ -50,9 +50,8 @@ def send_data(alpha_list, beta_list):
     try:
         packed_alpha = b''.join(struct.pack('d', num) for num in alpha_list)
         packed_beta = b''.join(struct.pack('d', num) for num in beta_list)
-        sleep_permiso_ard = struct.pack('d', 0.2000)
 
-        packed_data = packed_alpha + packed_beta + sleep_permiso_ard
+        packed_data = packed_alpha + packed_beta
         crc_value = zlib.crc32(packed_data) & 0xFFFFFFFF
         packed_crc = struct.pack('I', crc_value)
 
