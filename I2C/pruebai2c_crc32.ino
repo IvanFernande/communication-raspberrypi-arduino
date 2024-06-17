@@ -5,10 +5,10 @@
 
 uint8_t number[14] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 int number2;
-int values[7] = {5096, 10000, 8000, 15000, 20000, 7586, 23456};
+int values[6] = {5096, 10000, 8000, 15000, 20000, 7586};
 const int NUM_DOUBLES_ALPHA = 3; 
 const int NUM_DOUBLES_BETA = 3; 
-const int TOTAL_DOUBLES = NUM_DOUBLES_ALPHA + NUM_DOUBLES_BETA + 1; 
+const int TOTAL_DOUBLES = NUM_DOUBLES_ALPHA + NUM_DOUBLES_BETA; 
 
 void setup() {
   Serial.begin(9600);
@@ -59,12 +59,6 @@ void receiveData(int byteCount) {
       Serial.print("Received double: ");
       Serial.println(receivedData[i], 8);
     }
-
-    Serial.println("Check value:");
-    Serial.print("Received double: ");
-    Serial.println(receivedData[NUM_DOUBLES_ALPHA + NUM_DOUBLES_BETA], 8);
-  } else {
-    Serial.println("Error: Received data size mismatch");
   }
 }
 
