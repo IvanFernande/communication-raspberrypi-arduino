@@ -75,6 +75,8 @@ void receiveData(int byteCount) {
     for (int i = NUM_DOUBLES_ALPHA; i < NUM_DOUBLES_ALPHA + NUM_DOUBLES_BETA; i++) {
       Serial.print("Received double: ");
       Serial.println(receivedData[i], 8);
+
+      sleep_permiso = 1;
     }
   }
 }
@@ -91,7 +93,7 @@ void sendData() {
   values[5] = (int)valores_a_mandar[5]; //Sensor 5
   uint8_t number[14];
   
-  for (int i = 0; i < 5; i++) {
+  for (int i = 0; i < 6; i++) {
     int highByte = (values[i] >> 8) & 0xFF;
     int lowByte = values[i] & 0xFF;
     number[i * 2] = highByte;
