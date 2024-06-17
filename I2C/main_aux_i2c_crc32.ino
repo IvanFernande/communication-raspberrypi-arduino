@@ -80,7 +80,18 @@ void receiveData(int byteCount) {
 }
 
 void sendData() {
-  for (int i = 0; i < 6; i++) {
+  Serial.println("Ejecuto sendData():");
+  Serial.println(valores_a_mandar[3]);
+  int values[6];
+  values[0] = (int)valores_a_mandar[0]; //Sensor 0
+  values[1] = (int)valores_a_mandar[1]; //Sensor 1
+  values[2] = (int)valores_a_mandar[2]; //Sensor 2
+  values[3] = (int)valores_a_mandar[3]; //Sensor 3
+  values[4] = (int)valores_a_mandar[4]; //Sensor 4
+  values[5] = (int)valores_a_mandar[5]; //Sensor 5
+  uint8_t number[14];
+  
+  for (int i = 0; i < 5; i++) {
     int highByte = (values[i] >> 8) & 0xFF;
     int lowByte = values[i] & 0xFF;
     number[i * 2] = highByte;
