@@ -21,9 +21,9 @@ The step for setting up the Raspberry Pi for the I2C are:
 - Type 'sudo raspi-config' to enter a friendly computer configuration environment environment. Once we have confirmed that we want to enable this tool, it should indicate that it is now operational.
 - Restart the system to apply the changes. In the case of using a desktop image desktop image, simply click on the logo button and select ‘Reboot’. In the case of using the Raspberry Pi via SSH, the command would be: 'sudo nano reboot -h now' to reboot it instantly.
 - Once rebooted, run the command 'sudo i2cdetect -y 1' to search for connected devices on the I2C ports the devices connected to the I2C ports. If the devices are not found or any. If the devices are not found or an error occurs, access the 'config.txt' file of the Raspberry Pi. Once this is accessed, you should ensure that the following lines are uncommented, or at least the following lines are uncommented, or add them if they are not:
-- 'dtparam=i2c arm=on'
-- 'dtparam=i2c arm baudrate=100000'
-- 'dtparam=i2c1=on'
+  - 'dtparam=i2c arm=on'
+  - 'dtparam=i2c arm baudrate=100000'
+  - 'dtparam=i2c1=on'
 We will then save the file and reboot to make sure that the changes are applied in the same way as in
 changes are applied in the same way as in step 3.
 - Finally, run the ‘sudo i2cdetect -y 1’ command again with the slave dispo-
