@@ -1,4 +1,4 @@
-# I2C communication for a Raspberry Pi
+# I2C and Bluetooth communication between Arduino and Raspberry Pi
 
 ## Introduction
 This repository aims to collect different methods for communication between an Arduino MKR WAN 1310 and a Rapberrry Pi 3 model B+. The communication between these different devices is a key point in the IoT world as it allows devices at the edge to have a higher computational capacity without the need of an online server. 
