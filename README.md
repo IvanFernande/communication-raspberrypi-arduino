@@ -31,6 +31,17 @@ problem, as shown in the next figure.
 
 ![image](https://github.com/user-attachments/assets/b5ab9874-c346-485e-bd1c-104fdb2218de)
 
+Once the devices have been configured, the necessary libraries will be installed to establish the communication, as well as the transformation of the data into bytes so that they can be transmitted by this protocol.
+
+Subsequently, a recapitulation of the new Python and C++ libraries will be made in order to make this possible in the most orderly way possible.
+
+- struct (Python): Used to convert between byte strings and Python value representations (e.g. integers and decimals).
+
+- smbus2 (Python): Provides functions for communicating with I2C devices via the SMBus (System Management Bus).
+
+- Wire (C++): Allows the Arduino board to act as a master or slave to send and receive data with other devices connected via I2C.
+
+Translated with DeepL.com (free version)
 
 On the other hand, this protocol I consists of a method to verify a successful sending of data from one point to another. Therefore, CRC32 was selected as the verification method. This is quite common within this domain thanks to the amount of documentation on this in the network. 
 
