@@ -41,7 +41,10 @@ Subsequently, a recapitulation of the new Python and C++ libraries will be made 
 
 - Wire (C++): Allows the Arduino board to act as a master or slave to send and receive data with other devices connected via I2C.
 
-Translated with DeepL.com (free version)
+So far, these are the steps for configuring and sending data via I2C communication. However, it lacks a method to verify that the data has been sent correctly. For this, we have used the CRC32 method, which can be used in Arduino thanks to the CRC32 library and in Python thanks to the zlib library.
 
-On the other hand, this protocol I consists of a method to verify a successful sending of data from one point to another. Therefore, CRC32 was selected as the verification method. This is quite common within this domain thanks to the amount of documentation on this in the network. 
+Once the configuration steps have been followed, the codes in the I2C folder can be executed.
+
+### Bluetooth
+
 
