@@ -27,7 +27,10 @@ The step for setting up the Raspberry Pi for the I2C are:
 We will then save the file and reboot to make sure that the changes are applied in the same way as in
 changes are applied in the same way as in step 3.
 5. Finally, run the command ```sudo i2cdetect -y 1``` again with the slave device connected to the Raspberry Pi. It should then be found without any problem, as shown in the figure below.
-problem, as shown in figure 81
+problem, as shown in the next figure.
+
+![image](https://github.com/user-attachments/assets/b5ab9874-c346-485e-bd1c-104fdb2218de)
+
 
 On the other hand, this protocol I consists of a method to verify a successful sending of data from one point to another. Therefore, CRC32 was selected as the verification method. This is quite common within this domain thanks to the amount of documentation on this in the network. 
 
