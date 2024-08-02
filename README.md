@@ -67,6 +67,10 @@ To find out the address of the module in our Raspberry Pi, we run ```hcitool sca
 
 But if this is not enough, there are other methods for scanning for devices to find their addresses. In this case, the command ```bluetoothctl``` must be executed to interact with the Bluetooth devices. This command will open a console, where the following commands will be executed:
 
+- ```power on``` to turn on the bluetooth controller.
+- ```agent on``` to enable discovery mode.
+- ```scan on``` and ```scan off``` to start and stop scanning for devices. Once it finds them, their MAC addresses and names will be displayed. 
+
 ![image](https://github.com/user-attachments/assets/7da6a3b7-7b03-4652-969a-c5e2d86709d7)
 
 
