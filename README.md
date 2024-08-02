@@ -45,5 +45,7 @@ So far, these are the steps for configuring and sending data via I2C communicati
 Once the configuration steps have been followed, the codes in the I2C folder can be executed.
 
 ## Bluetooth
+Wireless connection between two devices for the purpose of creating an IoT tool is a favourite option because it does not rely on any wiring to transmit information from the sensors to the more computationally capable device and vice versa.
+
 
 
