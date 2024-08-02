@@ -47,10 +47,26 @@ Once the configuration steps have been followed, the codes in the I2C folder can
 ## Bluetooth
 Wireless connection between two devices for the purpose of creating an IoT tool is a favourite option because it does not rely on any wiring to transmit information from the sensors to the more computationally capable device and vice versa.
 
-The Raspberry Pi used in this repository has the possibility of bluetooth connection, but the Arduino board, on the other hand, does not.  That is why, in order to provide the Arduino board with this type of connection, an HC-05 was used, which consists of a device connected to the TX and RX pins that allows receiving and sending data through this protocol (when connected to the TX and RX pins, it is known that this communication will be serial.).
+The Raspberry Pi used in this repository has the possibility of bluetooth connection, but the Arduino board, on the other hand, does not.  That is why, in order to provide the Arduino board with this type of connection, an HC-05 was used, which consists of a device connected to the TX and RX pins that allows receiving and sending data through this protocol (when connected to the TX and RX pins, it is known that this communication will be serial).
 
 To configure this device, the AT commands shall be used. These are used to find out the visible device name, baud rate, whether it is in slave mode, and more information.
 Once the module has been configured, the Raspberry Pi will be connected to the module, and a test will be made to ensure that the connection has been made correctly.
 
+To do this, tools must be installed and a series of steps must be followed to obtain the address of this device for a future connection.
+- ```sudo apt-get update```
+- ```sudo apt-get install bluetooth ```
+
+After this installation, we need to activate the Bluetooth service. This is done by executing the following commands:
+
+- ```sudo systemctl enable bluetooth```
+- ```sudo systemctl start bluetooth```
+
+Next, the status of the Bluetooth adapter must be checked; this is done by running the command ```sudo hciconfig hci0 up```. Once these lines do not fail, you can use the ```hciconfig``` command. If this returns data such as the address of the Raspberry Pi, as well as the number of bits it can send via TX and receive via RX, then our computer is ready to search for our Bluetooth module in user mode. 
+
+To find out the address of the module in our Raspberry Pi, we run ```hcitool scan```. You should then see a message saying ```Scanning...``` to let you know that it will be searching for nearby bluetooth devices. Finally, it will find our HC-05 module with its address. 
+
+But if this is not enough, there are other methods for scanning for devices to find their addresses. In this case, the command ```bluetoothctl``` must be executed to interact with the Bluetooth devices. This command will open a console, where the following commands will be executed:
+
+![image](https://github.com/user-attachments/assets/7da6a3b7-7b03-4652-969a-c5e2d86709d7)
 
 
