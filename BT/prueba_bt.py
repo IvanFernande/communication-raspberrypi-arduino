@@ -5,17 +5,19 @@ import logging
 import pandas as pd
 from datetime import datetime
 
-# Configura el logging
+# Configure logging
 logging.basicConfig(level=logging.INFO)
 
+# Function to send data to the serial port
 def enviar_datos(ser, lista_datos):
-    # Enviar el tamaño de la lista primero
+    # Send the size of the list first
     ser.write(f'SIZE:{len(lista_datos)}\n'.encode('utf-8'))
 
-    # Enviar los elementos de la lista
+    # Send the elements of the list
     for dato in lista_datos:
         ser.write(f'DATA:{dato}\n'.encode('utf-8'))
 
+# Function to receive data from the serial port
 def recibir_datos(ser):
     if ser.in_waiting > 0:
         line = ser.readline().decode('utf-8').strip()
@@ -35,10 +37,12 @@ def recibir_datos(ser):
             return receivedData
     return None
 
+# Function to save received data to a CSV file
 def save_to_csv(values, filename):
     try:
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
+        # Create a dictionary with the data
         data = {
             "DateTime": [timestamp],
             "Sensor 0": [values[0]],
@@ -50,6 +54,7 @@ def save_to_csv(values, filename):
         }
         df = pd.DataFrame(data)
 
+        # Save the DataFrame to the CSV file
         df.to_csv(filename, mode='a', index=False, header=False)
         logging.info(f"Data saved to {filename}: {values}")
     except Exception as e:
@@ -64,22 +69,22 @@ def main():
         df = pd.DataFrame(columns=column_names)
         df.to_csv(filename, index=False)
 
-    # Configura la conexión serial
-    ser = serial.Serial('/dev/rfcomm0', 9600)  # Reemplaza '/dev/ttyUSB0' por el puerto correcto
-    time.sleep(2)  # Esperar un poco para asegurarse de que la conexión esté establecida
+    # Configure the serial connection
+    ser = serial.Serial('/dev/rfcomm0', 9600)  # Replace '/dev/rfcomm0' with the correct port
+    time.sleep(2)  # Wait a bit to ensure the connection is established
 
-    lista_datos_a_enviar = [10, 20, 30, 40, 50, 60]  # Ejemplo de datos a enviar
+    lista_datos_a_enviar = [10, 20, 30, 40, 50, 60]  # Example data to send
 
     while True:
-        # Enviar datos al Arduino
+        # Send data to the Arduino
         enviar_datos(ser, lista_datos_a_enviar)
 
-        # Esperar una respuesta del Arduino
+        # Wait for a response from the Arduino
         datos_recibidos = recibir_datos(ser)
         if datos_recibidos:
             save_to_csv(datos_recibidos, filename)
 
-        time.sleep(5)  # Esperar un tiempo antes de volver a enviar datos
+        time.sleep(5)  # Wait a while before sending data again
 
 if __name__ == "__main__":
     main()
