@@ -74,3 +74,5 @@ But if this is not enough, there are other methods for scanning for devices to f
 ![image](https://github.com/user-attachments/assets/7da6a3b7-7b03-4652-969a-c5e2d86709d7)
 
 You can see how the HC device is found, so we will write ```exit``` in the Bluetooth console to exit this, and run the following line: ```sudo rfcomm bind /dev/rfcomm0 XX:XX:XX:XX:XX:XX:XX:XX``` replacing the Xs by the address of the module to which we want to connect. This allows us to create a connection channel (this being the tfcomm0) with the address of the module that our Raspberry Pi has previously found. In this way, we will have connected our device, having to define in the code that will be defined later that we want to establish a connection through this port.
+
+Once the devices have been configured, the codes in the ''BT'' folder are executed.
