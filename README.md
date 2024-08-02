@@ -63,7 +63,7 @@ After this installation, we need to activate the Bluetooth service. This is done
 
 Next, the status of the Bluetooth adapter must be checked; this is done by running the command ```sudo hciconfig hci0 up```. Once these lines do not fail, you can use the ```hciconfig``` command. If this returns data such as the address of the Raspberry Pi, as well as the number of bits it can send via TX and receive via RX, then our computer is ready to search for our Bluetooth module in user mode. 
 
-To find out the address of the module in our Raspberry Pi, we run ```hcitool scan```. You should then see a message saying ```Scanning...``` to let you know that it will be searching for nearby bluetooth devices. Finally, it will find our HC-05 module with its address. 
+To find out the address of the module in our Raspberry Pi, we run ```hcitool scan```. You should then see a message saying ''Scanning...'' to let you know that it will be searching for nearby bluetooth devices. Finally, it will find our HC-05 module with its address. 
 
 But if this is not enough, there are other methods for scanning for devices to find their addresses. In this case, the command ```bluetoothctl``` must be executed to interact with the Bluetooth devices. This command will open a console, where the following commands will be executed:
 
