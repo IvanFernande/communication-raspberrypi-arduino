@@ -1,5 +1,3 @@
-numpy==1.26.4
-pandas==2.0.3
-requests==2.31.0
-onnx==1.16.1
-onnxruntime==1.18.0
+pandas
+smbus2
+pyserial
