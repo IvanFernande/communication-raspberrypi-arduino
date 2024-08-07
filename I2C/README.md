@@ -2,4 +2,4 @@ In this section, there are 4 files, grouped 2 by 2, being the i2c.py and i2c.ino
 
 On the other hand, the i2c_crc32.py and i2c_crc32.ino files are files that allow communication between the two devices with the CRC32 method to verify correct communication.
 
-![image](https://github.com/user-attachments/assets/3af6540d-86e6-4c91-9199-c05ae4c96834)
+![image](https://github.com/user-attachments/assets/b273ecdd-33a2-4f93-a223-e730f51dbc0a)
